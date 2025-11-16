@@ -358,10 +358,11 @@ function convertirEscalaGrises(matriz) {
  * const invertido = voltearVertical(matriz);
  */
 function voltearVertical(matriz) {
-  // TODO: Implementar volteo vertical
-  
-  return []; // REEMPLAZAR
+  const resultado = matriz.map(fila => fila.map(p => ({ ...p })));
+  resultado.reverse();
+  return resultado;
 }
+
 
 /**
  * Ejercicio 3.3: Rotar 90 grados en sentido horario (10 puntos)
