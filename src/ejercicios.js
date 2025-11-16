@@ -426,22 +426,39 @@ function rotar90Grados(matriz) {
  * const mezcla = mezclarImagenes(imagen1, imagen2, 0.5); // 50/50
  */
 function mezclarImagenes(matriz1, matriz2, factor) {
-  // TODO: Implementar mezcla de imágenes
-  
-  // 1. Verificar que tengan las mismas dimensiones
-  // const dims1 = obtenerDimensiones(matriz1);
-  // const dims2 = obtenerDimensiones(matriz2);
-  // if (dims1.filas !== dims2.filas || dims1.columnas !== dims2.columnas) {
-  //   throw new Error('Las imágenes deben tener el mismo tamaño');
-  // }
-  
-  // 2. Para cada pixel:
-  // r = r1 * (1 - factor) + r2 * factor
-  // g = g1 * (1 - factor) + g2 * factor
-  // b = b1 * (1 - factor) + b2 * factor
-  
-  return []; // REEMPLAZAR
+  const dims1 = obtenerDimensiones ? obtenerDimensiones(matriz1) : { filas: matriz1.length, columnas: matriz1[0]?.length || 0 };
+  const dims2 = obtenerDimensiones ? obtenerDimensiones(matriz2) : { filas: matriz2.length, columnas: matriz2[0]?.length || 0 };
+
+  if (dims1.filas !== dims2.filas || dims1.columnas !== dims2.columnas) {
+    throw new Error('Las imágenes deben tener el mismo tamaño');
+  }
+
+  const filas = dims1.filas;
+  const columnas = dims1.columnas;
+  const resultado = Array.from({ length: filas }, () => Array.from({ length: columnas }, () => ({ r:0,g:0,b:0,a:255 })));
+
+  for (let i = 0; i < filas; i++) {
+    for (let j = 0; j < columnas; j++) {
+      const p1 = matriz1[i][j];
+      const p2 = matriz2[i][j];
+
+      const r = Math.round(p1.r * (1 - factor) + p2.r * factor);
+      const g = Math.round(p1.g * (1 - factor) + p2.g * factor);
+      const b = Math.round(p1.b * (1 - factor) + p2.b * factor);
+      const a = Math.round((p1.a * (1 - factor) + p2.a * factor));
+
+      resultado[i][j] = {
+        r: typeof limitarValorColor === 'function' ? limitarValorColor(r) : Math.max(0, Math.min(255, r)),
+        g: typeof limitarValorColor === 'function' ? limitarValorColor(g) : Math.max(0, Math.min(255, g)),
+        b: typeof limitarValorColor === 'function' ? limitarValorColor(b) : Math.max(0, Math.min(255, b)),
+        a: typeof limitarValorColor === 'function' ? limitarValorColor(a) : Math.max(0, Math.min(255, a))
+      };
+    }
+  }
+
+  return resultado;
 }
+
 
 /**
  * Ejercicio 4.2: Filtro Sepia (9 puntos)
