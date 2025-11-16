@@ -228,22 +228,24 @@ function obtenerDimensionesImagen(rutaImagen) {
  * const oscuro = ajustarBrillo(matriz, 0.5);    // 50% más oscuro
  */
 function ajustarBrillo(matriz, factor) {
-  // TODO: Implementar ajuste de brillo
-  
-  // 1. Crear matriz resultado
-  // const resultado = copiarMatriz(matriz);
-  
-  // 2. Para cada pixel, multiplicar R, G, B por el factor
-  // for (let i = 0; i < resultado.length; i++) {
-  //   for (let j = 0; j < resultado[i].length; j++) {
-  //     resultado[i][j].r = limitarValorColor(matriz[i][j].r * factor);
-  //     resultado[i][j].g = limitarValorColor(matriz[i][j].g * factor);
-  //     resultado[i][j].b = limitarValorColor(matriz[i][j].b * factor);
-  //     // El canal alpha NO se modifica
-  //   }
-  // }
-  
-  return []; // REEMPLAZAR
+  const resultado = copiarMatriz ? copiarMatriz(matriz) : matriz.map(f => f.map(p => ({ ...p })));
+
+  for (let i = 0; i < resultado.length; i++) {
+    for (let j = 0; j < resultado[i].length; j++) {
+      const orig = matriz[i][j];
+      const r = Math.round(orig.r * factor);
+      const g = Math.round(orig.g * factor);
+      const b = Math.round(orig.b * factor);
+
+      resultado[i][j].r = typeof limitarValorColor === 'function' ? limitarValorColor(r) : Math.max(0, Math.min(255, r));
+      resultado[i][j].g = typeof limitarValorColor === 'function' ? limitarValorColor(g) : Math.max(0, Math.min(255, g));
+      resultado[i][j].b = typeof limitarValorColor === 'function' ? limitarValorColor(b) : Math.max(0, Math.min(255, b));
+      // alpha sin cambio
+      resultado[i][j].a = orig.a;
+    }
+  }
+
+  return resultado;
 }
 
 /**
