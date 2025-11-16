@@ -267,9 +267,19 @@ function ajustarBrillo(matriz, factor) {
  * // Rojo (255,0,0) → Cian (0,255,255)
  */
 function invertirColores(matriz) {
-  // TODO: Implementar inversión de colores
-  
-  return []; // REEMPLAZAR
+  const resultado = copiarMatriz ? copiarMatriz(matriz) : matriz.map(f => f.map(p => ({ ...p })));
+
+  for (let i = 0; i < resultado.length; i++) {
+    for (let j = 0; j < resultado[i].length; j++) {
+      const orig = matriz[i][j];
+      resultado[i][j].r = 255 - orig.r;
+      resultado[i][j].g = 255 - orig.g;
+      resultado[i][j].b = 255 - orig.b;
+      resultado[i][j].a = orig.a;
+    }
+  }
+
+  return resultado;
 }
 
 /**
