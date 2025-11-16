@@ -102,43 +102,50 @@ function imagenAMatriz(rutaImagen) {
  * matrizAImagen(matriz, 'imagenes/salida/copia.png');
  */
 function matrizAImagen(matriz, rutaSalida) {
-  // TODO: Implementar la conversión de matriz a PNG
-  
-  // 1. Validar la matriz
-  // validarMatriz(matriz);
-  
-  // 2. Obtener dimensiones
-  // const dims = obtenerDimensiones(matriz);
-  
-  // 3. Crear el PNG
-  // const png = new PNG({
-  //   width: dims.columnas,
-  //   height: dims.filas
-  // });
-  
-  // 4. Llenar png.data
-  // for (let y = 0; y < dims.filas; y++) {
-  //   for (let x = 0; x < dims.columnas; x++) {
-  //     const idx = (dims.columnas * y + x) << 2;
-  //     const pixel = matriz[y][x];
-  //     
-  //     png.data[idx] = limitarValorColor(pixel.r);
-  //     png.data[idx + 1] = limitarValorColor(pixel.g);
-  //     png.data[idx + 2] = limitarValorColor(pixel.b);
-  //     png.data[idx + 3] = limitarValorColor(pixel.a);
-  //   }
-  // }
-  
-  // 5. Asegurar que existe el directorio de salida
-  // asegurarDirectorio(path.dirname(rutaSalida));
-  
-  // 6. Guardar el archivo
-  // const buffer = PNG.sync.write(png);
-  // fs.writeFileSync(rutaSalida, buffer);
-  
-  // ESCRIBE TU CÓDIGO AQUÍ
-}
+  // Validar matriz (si existe la utilidad)
+  if (typeof validarMatriz === 'function') {
+    validarMatriz(matriz);
+  }
 
+  // Obtener dimensiones
+  const dims = typeof obtenerDimensiones === 'function'
+    ? obtenerDimensiones(matriz)
+    : { filas: matriz.length, columnas: matriz[0]?.length || 0 };
+
+  const width = dims.columnas;
+  const height = dims.filas;
+
+  // Crear PNG
+  const png = new PNG({ width, height });
+
+  // Llenar png.data
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const idx = (width * y + x) << 2;
+      const pixel = matriz[y][x] || { r: 0, g: 0, b: 0, a: 0 };
+
+      png.data[idx]     = typeof limitarValorColor === 'function'
+                           ? limitarValorColor(Math.round(pixel.r))
+                           : Math.max(0, Math.min(255, Math.round(pixel.r || 0)));
+      png.data[idx + 1] = typeof limitarValorColor === 'function'
+                           ? limitarValorColor(Math.round(pixel.g))
+                           : Math.max(0, Math.min(255, Math.round(pixel.g || 0)));
+      png.data[idx + 2] = typeof limitarValorColor === 'function'
+                           ? limitarValorColor(Math.round(pixel.b))
+                           : Math.max(0, Math.min(255, Math.round(pixel.b || 0)));
+      png.data[idx + 3] = typeof limitarValorColor === 'function'
+                           ? limitarValorColor(Math.round(pixel.a))
+                           : Math.max(0, Math.min(255, Math.round(pixel.a !== undefined ? pixel.a : 255)));
+    }
+  }
+
+  // Asegurar directorio
+  asegurarDirectorio(path.dirname(rutaSalida));
+
+  // Guardar archivo
+  const buffer = PNG.sync.write(png);
+  fs.writeFileSync(rutaSalida, buffer);
+}
 /**
  * Ejercicio 1.3: Obtener un canal específico de color (5 puntos)
  * 
